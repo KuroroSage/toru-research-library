@@ -272,27 +272,53 @@ function md(s){
   s=s.replace(/\n/g,'<br>');
   s='<p>'+s+'</p>';
   s=s.replace(/\x00B(\d+)\x00/g,function(m,n){return blocks[parseInt(n)]});
-  // Cross-link: turn research/path.md and filename.md references into clickable doc links
+  // Cross-link: after full render, replace doc references in text nodes only
+  // Work on the DOM to avoid breaking HTML attributes
+  var tmp=document.createElement('div');
+  tmp.innerHTML=s;
   var allFiles=Object.keys(DOCS);
+  // Build lookup: "research/file.md" → key, "file.md" → key
+  var lookup={};
   allFiles.forEach(function(f){
-    // Match research/path.md or just the filename
-    var patterns=[
-      'research/'+f,
-      f
-    ];
-    // Also match without .md
-    var noExt=f.replace('.md','');
-    patterns.forEach(function(p){
-      // Escape for regex
-      var esc=p.replace(/[.*+?^${}()|[\]\\\/]/g,'\\$&');
-      // Don't replace if already inside an href or onclick
-      var re=new RegExp('(?<!href="|onclick="|data-f=")(<code>)?('+esc+')(<\\/code>)?','g');
-      s=s.replace(re,function(m,pre,match,post){
-        return '<a href="#" onclick="event.preventDefault();show(\''+f.replace(/'/g,"\\'")+'\');return false" style="color:var(--accent);text-decoration:underline;cursor:pointer">'+(pre||'')+match+(post||'')+'</a>';
-      });
-    });
+    lookup['research/'+f]=f;
+    lookup[f]=f;
   });
-  return s;
+  // Sort patterns longest first to avoid partial matches
+  var patterns=Object.keys(lookup).sort(function(a,b){return b.length-a.length});
+  var patsEsc=patterns.map(function(p){return p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')});
+  var megaRe=new RegExp('('+patsEsc.join('|')+')','g');
+  
+  function walkText(node){
+    if(node.nodeType===3){
+      var text=node.textContent;
+      if(!megaRe.test(text))return;
+      megaRe.lastIndex=0;
+      var frag=document.createDocumentFragment();
+      var last=0;
+      var m;
+      megaRe.lastIndex=0;
+      while((m=megaRe.exec(text))!==null){
+        if(m.index>last)frag.appendChild(document.createTextNode(text.slice(last,m.index)));
+        var a=document.createElement('a');
+        a.href='#';
+        a.textContent=m[0];
+        a.style.cssText='color:var(--accent);text-decoration:underline;cursor:pointer';
+        var docKey=lookup[m[0]];
+        a.setAttribute('data-doc',docKey);
+        a.onclick=function(e){e.preventDefault();show(this.getAttribute('data-doc'))};
+        frag.appendChild(a);
+        last=megaRe.lastIndex;
+      }
+      if(last<text.length)frag.appendChild(document.createTextNode(text.slice(last)));
+      node.parentNode.replaceChild(frag,node);
+    }else if(node.nodeType===1&&!(/^(a|pre|code|script|style)$/i.test(node.tagName))){
+      // Walk children in reverse to handle replacements safely
+      var kids=Array.prototype.slice.call(node.childNodes);
+      kids.forEach(walkText);
+    }
+  }
+  walkText(tmp);
+  return tmp.innerHTML;
 }
 
 // Priority order
