@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuroro Bestiary</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a28;--bg4:#222236;
+  --gold:#f0a830;--gold2:#d4922a;--gold3:#ffd700;
+  --text:#e8e6e3;--text2:#9a98a0;--text3:#6a6872;
+  --Fire:#FF6B35;--Water:#4FC3F7;--Plant:#66BB6A;--Electric:#FFD54F;
+  --Earth:#8D6E63;--Dark:#7E57C2;--Light:#FFF176;--Wind:#80CBC4;
+  --Metal:#90A4AE;--Corrosion:#CE93D8;--Spirit:#E1BEE7;--Combat:#EF5350;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+::selection{background:var(--gold);color:var(--bg)}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--gold2)}
+
+/* HERO */
+.hero{text-align:center;padding:60px 20px 40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(240,168,48,0.08) 0%,transparent 70%);pointer-events:none}
+.hero-title{font-family:'Cinzel',serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:900;background:linear-gradient(135deg,var(--gold3),var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:6px;margin-bottom:8px;text-shadow:0 0 60px rgba(240,168,48,0.3)}
+.hero-sub{font-size:clamp(0.9rem,2vw,1.15rem);color:var(--text2);letter-spacing:3px;font-weight:300;margin-bottom:6px}
+.hero-brand{font-size:0.75rem;color:var(--text3);letter-spacing:2px;margin-top:10px}
+.hero-brand span{color:var(--gold)}
+.hero-line{width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:20px auto 0}
+
+/* CONTROLS */
+.controls{max-width:1400px;margin:0 auto;padding:0 20px 30px;position:sticky;top:0;z-index:100;background:linear-gradient(180deg,var(--bg) 0%,var(--bg) 85%,transparent);padding-top:16px}
+.search-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.search-box{flex:1;min-width:200px;background:var(--bg3);border:1px solid var(--bg4);border-radius:12px;padding:12px 18px;color:var(--text);font-size:0.95rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .3s}
+.search-box:focus{border-color:var(--gold)}
+.search-box::placeholder{color:var(--text3)}
+.sort-select{background:var(--bg3);border:1px solid var(--bg4);border-radius:12px;padding:12px 18px;color:var(--text);font-size:0.9rem;font-family:'Inter',sans-serif;outline:none;cursor:pointer;min-width:140px}
+.sort-select:focus{border-color:var(--gold)}
+.sort-select option{background:var(--bg2);color:var(--text)}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filter-label{font-size:0.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-right:4px}
+.filter-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--bg4);background:var(--bg2);color:var(--text2);font-size:0.78rem;cursor:pointer;transition:all .25s;font-family:'Inter',sans-serif;white-space:nowrap}
+.filter-btn:hover{border-color:var(--text3);color:var(--text)}
+.filter-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(240,168,48,0.1)}
+.filter-btn.element-filter.active{color:#fff}
+.filter-divider{width:1px;height:24px;background:var(--bg4);margin:0 4px}
+.stats-count{font-size:0.8rem;color:var(--text3);text-align:center;margin-bottom:20px;letter-spacing:1px}
+
+/* GRID */
+.grid{max-width:1400px;margin:0 auto;padding:0 20px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+@media(max-width:520px){.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--bg4);border-radius:16px;padding:20px;cursor:pointer;transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--card-accent,var(--gold)),transparent);opacity:0;transition:opacity .3s}
+.card:hover{transform:translateY(-6px);border-color:var(--gold2);box-shadow:0 12px 40px rgba(0,0,0,0.4),0 0 20px rgba(240,168,48,0.08)}
+.card:hover::before{opacity:1}
+.card-portrait{width:80px;height:80px;margin:0 auto 14px;image-rendering:pixelated;border-radius:12px;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.card-portrait img{width:80px;height:80px;image-rendering:pixelated;display:block}
+.card-portrait .placeholder{font-size:2rem;color:var(--text3);user-select:none}
+.card-name{font-family:'Cinzel',serif;font-size:1.05rem;font-weight:700;text-align:center;margin-bottom:8px;color:var(--text)}
+.card-elements{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+.element-badge{padding:3px 8px;border-radius:10px;font-size:0.65rem;font-weight:600;letter-spacing:0.5px;color:#000;text-transform:uppercase}
+.card-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.rarity-badge{font-size:0.65rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+.rarity-starter{color:#78909C}.rarity-core{color:#66BB6A}.rarity-rare{color:#42A5F5}
+.rarity-epic{color:#AB47BC}.rarity-mythic{color:var(--gold3)}
+.stage-dots{display:flex;gap:4px}
+.stage-dot{width:8px;height:8px;border-radius:50%;background:var(--bg4);border:1px solid var(--text3)}
+.stage-dot.filled{background:var(--gold);border-color:var(--gold)}
+/* Mystery card */
+.card.mystery{opacity:0.6}
+.card.mystery:hover{opacity:0.8}
+.card.mystery .card-name{color:var(--text3)}
+.card.mystery .card-portrait{background:var(--bg);border:1px dashed var(--bg4)}
+
+/* MODAL */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .3s}
+.modal-overlay.show{display:flex;opacity:1}
+.modal{background:var(--bg2);border:1px solid var(--bg4);border-radius:20px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;padding:36px;position:relative;transform:scale(0.95);transition:transform .3s}
+.modal-overlay.show .modal{transform:scale(1)}
+.modal-close{position:absolute;top:16px;right:20px;background:none;border:none;color:var(--text3);font-size:1.5rem;cursor:pointer;transition:color .2s;z-index:2}
+.modal-close:hover{color:var(--gold)}
+.modal-header{display:flex;gap:24px;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap}
+.modal-portrait{width:112px;height:112px;image-rendering:pixelated;border-radius:16px;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.modal-portrait img{width:112px;height:112px;image-rendering:pixelated}
+.modal-portrait .placeholder{font-size:3rem;color:var(--text3)}
+.modal-info{flex:1;min-width:200px}
+.modal-name{font-family:'Cinzel',serif;font-size:1.8rem;font-weight:900;margin-bottom:6px;color:var(--text)}
+.modal-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.modal-elements{display:flex;gap:6px;flex-wrap:wrap}
+.modal-desc{font-size:0.88rem;color:var(--text2);line-height:1.7;margin-bottom:24px;font-style:italic}
+.stat-label{font-size:0.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;display:flex;justify-content:space-between}
+.stat-bar-bg{width:100%;height:10px;background:var(--bg);border-radius:5px;margin-bottom:12px;overflow:hidden}
+.stat-bar{height:100%;border-radius:5px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.stat-hp .stat-bar{background:linear-gradient(90deg,#4CAF50,#66BB6A)}
+.stat-atk .stat-bar{background:linear-gradient(90deg,#e53935,#EF5350)}
+.stat-def .stat-bar{background:linear-gradient(90deg,#1565C0,#42A5F5)}
+.stat-matk .stat-bar{background:linear-gradient(90deg,#7B1FA2,#AB47BC)}
+.stat-mdef .stat-bar{background:linear-gradient(90deg,#00695C,#26A69A)}
+.stat-spd .stat-bar{background:linear-gradient(90deg,#E65100,#FF9800)}
+.section-title{font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:2px;color:var(--gold);margin:24px 0 14px;text-transform:uppercase}
+.evo-chain{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.evo-item{background:var(--bg3);border:1px solid var(--bg4);border-radius:12px;padding:10px 16px;text-align:center;cursor:pointer;transition:all .25s;min-width:90px}
+.evo-item:hover,.evo-item.current{border-color:var(--gold);background:rgba(240,168,48,0.08)}
+.evo-item .evo-stage{font-size:0.6rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.evo-item .evo-name{font-size:0.85rem;font-weight:600;margin-top:2px}
+.evo-item .evo-var{font-size:0.6rem;color:var(--text3);margin-top:2px}
+.evo-arrow{color:var(--text3);font-size:1.2rem}
+.move-badge{padding:4px 12px;border-radius:8px;font-size:0.7rem;background:var(--bg3);color:var(--text2);border:1px solid var(--bg4)}
+
+/* FOOTER */
+.footer{text-align:center;padding:40px 20px 30px;border-top:1px solid var(--bg3)}
+.footer p{font-size:0.78rem;color:var(--text3);letter-spacing:1px}
+.footer a{color:var(--gold);text-decoration:none}
+.footer a:hover{text-decoration:underline}
+
+/* ANIMATIONS */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:fadeInUp .4s ease both}
+.grid .card:nth-child(n){animation-delay:calc(var(--i,0) * 30ms)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1 class="hero-title">KURORO BESTIARY</h1>
+  <p class="hero-sub">65 species · 12 elements · One island</p>
+  <div class="hero-line"></div>
+  <p class="hero-brand">Curated by <span>Toru</span>, CEO of KURO Studios</p>
+</div>
+
+<div class="controls">
+  <div class="search-row">
+    <input class="search-box" type="text" placeholder="Search beasts..." id="search">
+    <select class="sort-select" id="sort">
+      <option value="id">Sort: Dex Order</option>
+      <option value="name">Sort: Name</option>
+      <option value="hp">Sort: HP</option>
+      <option value="atk">Sort: ATK</option>
+      <option value="spd">Sort: SPD</option>
+      <option value="rarity">Sort: Rarity</option>
+    </select>
+  </div>
+  <div class="filter-row" id="filters">
+    <span class="filter-label">Element</span>
+    <div class="filter-divider"></div>
+    <span class="filter-label" style="margin-left:8px">Rarity</span>
+  </div>
+</div>
+
+<p class="stats-count" id="count"></p>
+<div class="grid" id="grid"></div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Built by Toru, CEO of Kuroro Beasts · <a href="https://kuroro.com" target="_blank">kuroro.com</a></p>
+</div>
+
+<script src="game-data.js"></script>
+<script>
+(function(){
+const ELEMENTS = ['Fire','Water','Plant','Electric','Earth','Dark','Light','Wind','Metal','Corrosion','Spirit','Combat'];
+const RARITIES = ['starter','core','rare','epic','mythic'];
+const RARITY_ORDER = {starter:0,core:1,rare:2,epic:3,mythic:4};
+const ELEMENT_COLORS = {Fire:'#FF6B35',Water:'#4FC3F7',Plant:'#66BB6A',Electric:'#FFD54F',Earth:'#8D6E63',Dark:'#7E57C2',Light:'#FFF176',Wind:'#80CBC4',Metal:'#90A4AE',Corrosion:'#CE93D8',Spirit:'#E1BEE7',Combat:'#EF5350'};
+const PORTRAIT_IDS = new Set([1,10,19,28,31,34,37,40,43,46,49,52,55,58,61,64,67,70,73,76,79,82,88,94,97,100,106,109,112,115,118,156,183]);
+
+// Parse species - group by specieNum, pick stage 1 as the "card" representative
+const speciesMap = {};
+BEASTS.forEach(b => {
+  if(!speciesMap[b.specieNum]) speciesMap[b.specieNum] = [];
+  speciesMap[b.specieNum].push(b);
+});
+
+// For each species, the "representative" is stage 1 (no variation or first one)
+const species = Object.values(speciesMap).map(group => {
+  const stage1 = group.find(b => b.stage === 1) || group[0];
+  // Get the description from any beast in the group that has one
+  const descBeast = group.find(b => b.desc && b.desc.length > 0) || stage1;
+  // Get max stats from highest stage (no variation for non-starters, or just take the best)
+  const maxStage = Math.max(...group.map(b=>b.stage));
+  // For card display, use stage 1 stats; for modal, show selectable evolutions
+  return {
+    id: stage1.id,
+    specieNum: stage1.specieNum,
+    name: stage1.name,
+    elements: stage1.elements.split(',').map(e=>e.trim()).filter(Boolean),
+    rarity: stage1.rarity,
+    stage1: stage1,
+    desc: descBeast.desc || '',
+    allBeasts: group,
+    maxStage,
+    isMystery: stage1.name === '???'
+  };
+});
+
+// Compute global max stat (excluding 999 placeholders)
+let MAX_STAT = 0;
+BEASTS.forEach(b => {
+  [b.hp,b.atk,b.def,b.mAtk,b.mDef,b.spd].forEach(v => { if(v < 999 && v > MAX_STAT) MAX_STAT = v; });
+});
+
+// State
+let activeElements = new Set();
+let activeRarities = new Set();
+let searchTerm = '';
+let sortKey = 'id';
+
+// Build filter buttons
+const filtersEl = document.getElementById('filters');
+// Insert element buttons before the divider
+const divider = filtersEl.querySelector('.filter-divider');
+ELEMENTS.forEach(el => {
+  const btn = document.createElement('button');
+  btn.className = 'filter-btn element-filter';
+  btn.textContent = el;
+  btn.dataset.element = el;
+  btn.style.setProperty('--el-color', ELEMENT_COLORS[el]);
+  btn.addEventListener('click', () => {
+    if(activeElements.has(el)) { activeElements.delete(el); btn.classList.remove('active'); btn.style.background=''; btn.style.borderColor=''; }
+    else { activeElements.add(el); btn.classList.add('active'); btn.style.background=ELEMENT_COLORS[el]+'22'; btn.style.borderColor=ELEMENT_COLORS[el]; }
+    render();
+  });
+  filtersEl.insertBefore(btn, divider);
+});
+
+RARITIES.forEach(r => {
+  const btn = document.createElement('button');
+  btn.className = 'filter-btn rarity-filter';
+  btn.textContent = r;
+  btn.dataset.rarity = r;
+  btn.addEventListener('click', () => {
+    if(activeRarities.has(r)) { activeRarities.delete(r); btn.classList.remove('active'); }
+    else { activeRarities.add(r); btn.classList.add('active'); }
+    render();
+  });
+  filtersEl.appendChild(btn);
+});
+
+document.getElementById('search').addEventListener('input', e => { searchTerm = e.target.value.toLowerCase(); render(); });
+document.getElementById('sort').addEventListener('change', e => { sortKey = e.target.value; render(); });
+
+function getPortraitHTML(id, size=80) {
+  const pid = String(id).padStart(3,'0');
+  if(PORTRAIT_IDS.has(id)) {
+    return `<img src="beast-portraits/beast_${pid}.png" alt="" style="width:${size}px;height:${size}px">`;
+  }
+  return `<span class="placeholder">?</span>`;
+}
+
+function elementBadge(el, size='normal') {
+  const c = ELEMENT_COLORS[el] || '#666';
+  const dark = ['Electric','Light','Spirit'].includes(el);
+  const textColor = dark ? '#000' : '#fff';
+  const pad = size === 'normal' ? '3px 8px' : '4px 10px';
+  const fs = size === 'normal' ? '0.65rem' : '0.72rem';
+  return `<span class="element-badge" style="background:${c};color:${textColor};padding:${pad};font-size:${fs}">${el}</span>`;
+}
+
+function filterAndSort() {
+  let list = [...species];
+  if(searchTerm) list = list.filter(s => s.name.toLowerCase().includes(searchTerm));
+  if(activeElements.size) list = list.filter(s => s.elements.some(e => activeElements.has(e)));
+  if(activeRarities.size) list = list.filter(s => activeRarities.has(s.rarity));
+
+  list.sort((a,b) => {
+    if(sortKey === 'id') return a.specieNum - b.specieNum;
+    if(sortKey === 'name') {
+      if(a.isMystery && !b.isMystery) return 1;
+      if(!a.isMystery && b.isMystery) return -1;
+      return a.name.localeCompare(b.name);
+    }
+    if(sortKey === 'rarity') return (RARITY_ORDER[b.rarity]||0) - (RARITY_ORDER[a.rarity]||0);
+    // stat sort — use stage 1
+    const av = a.stage1[sortKey] === 999 ? 0 : (a.stage1[sortKey]||0);
+    const bv = b.stage1[sortKey] === 999 ? 0 : (b.stage1[sortKey]||0);
+    return bv - av;
+  });
+  return list;
+}
+
+function render() {
+  const list = filterAndSort();
+  const grid = document.getElementById('grid');
+  document.getElementById('count').textContent = `Showing ${list.length} of ${species.length} species`;
+
+  grid.innerHTML = list.map((s, i) => {
+    const mystery = s.isMystery;
+    const els = mystery ? s.elements : s.elements;
+    const accentColor = ELEMENT_COLORS[els[0]] || 'var(--gold)';
+    return `<div class="card${mystery?' mystery':''}" style="--card-accent:${accentColor};--i:${Math.min(i,20)}" data-specie="${s.specieNum}">
+      <div class="card-portrait">${mystery ? '<span class="placeholder">???</span>' : getPortraitHTML(s.stage1.id)}</div>
+      <div class="card-name">${s.name}</div>
+      <div class="card-elements">${els.map(e => elementBadge(e)).join('')}</div>
+      <div class="card-bottom">
+        <span class="rarity-badge rarity-${s.rarity}">${s.rarity}</span>
+        <div class="stage-dots">${Array.from({length: s.maxStage}, (_,j) => `<div class="stage-dot${j===0?' filled':''}"></div>`).join('')}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Re-attach click handlers
+  grid.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', () => openModal(parseInt(card.dataset.specie)));
+  });
+}
+
+function statBar(label, value, cssClass) {
+  if(value === 999) value = MAX_STAT; // display max for placeholder
+  const pct = Math.min(100, (value / MAX_STAT) * 100);
+  return `<div class="${cssClass}">
+    <div class="stat-label"><span>${label}</span><span>${value === 0 ? '???' : value}</span></div>
+    <div class="stat-bar-bg"><div class="stat-bar" style="width:${value === 0 ? 0 : pct}%"></div></div>
+  </div>`;
+}
+
+function openModal(specieNum) {
+  const group = speciesMap[specieNum];
+  if(!group) return;
+  showBeastInModal(group, group.find(b=>b.stage===1)||group[0]);
+  document.getElementById('modal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function showBeastInModal(group, beast) {
+  const isMystery = beast.name === '???';
+  const els = beast.elements.split(',').map(e=>e.trim()).filter(Boolean);
+  const desc = group.find(b => b.desc && b.desc.length > 0);
+  const descText = desc ? desc.desc : '';
+
+  // Build unique evolution stages (dedup by stage+variation)
+  const stages = [];
+  const seen = new Set();
+  group.forEach(b => {
+    const key = `${b.stage}-${b.variation||''}`;
+    if(!seen.has(key)){ seen.add(key); stages.push(b); }
+  });
+  stages.sort((a,b) => a.stage - b.stage || a.id - b.id);
+
+  const hp = beast.hp === 999 ? MAX_STAT : beast.hp;
+  const atk = beast.atk === 999 ? MAX_STAT : beast.atk;
+  const def = beast.def === 999 ? MAX_STAT : beast.def;
+  const mAtk = beast.mAtk === 999 ? MAX_STAT : beast.mAtk;
+  const mDef = beast.mDef === 999 ? MAX_STAT : beast.mDef;
+  const spd = beast.spd === 999 ? MAX_STAT : beast.spd;
+  const hasStats = beast.hp > 0 || beast.atk > 0;
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-header">
+      <div class="modal-portrait">${isMystery ? '<span class="placeholder">???</span>' : getPortraitHTML(beast.id, 112)}</div>
+      <div class="modal-info">
+        <div class="modal-name">${beast.name}${beast.variation ? ` <span style="color:var(--text3);font-size:0.9rem">(${beast.variation})</span>` : ''}</div>
+        <div class="modal-meta">
+          <span class="rarity-badge rarity-${beast.rarity}" style="font-size:0.75rem">${beast.rarity}</span>
+          <span class="move-badge">${beast.moveType}</span>
+          <span style="font-size:0.72rem;color:var(--text3)">Stage ${beast.stage}</span>
+        </div>
+        <div class="modal-elements">${els.map(e => elementBadge(e, 'large')).join('')}</div>
+      </div>
+    </div>
+    ${descText ? `<div class="modal-desc">"${descText}"</div>` : ''}
+    ${hasStats ? `
+    <div class="section-title">Base Stats</div>
+    ${statBar('HP', hp, 'stat-hp')}
+    ${statBar('ATK', atk, 'stat-atk')}
+    ${statBar('DEF', def, 'stat-def')}
+    ${statBar('mATK', mAtk, 'stat-matk')}
+    ${statBar('mDEF', mDef, 'stat-mdef')}
+    ${statBar('SPD', spd, 'stat-spd')}
+    <div style="text-align:right;margin-top:-4px"><span style="font-size:0.7rem;color:var(--text3)">Total: ${[hp,atk,def,mAtk,mDef,spd].reduce((a,b)=>a+b,0)}</span></div>
+    ` : '<div style="text-align:center;padding:30px;color:var(--text3);font-style:italic">Stats unrevealed</div>'}
+    <div class="section-title">Evolution Chain</div>
+    <div class="evo-chain">
+      ${stages.map((s, i) => {
+        const isCurrent = s.id === beast.id;
+        return (i > 0 ? '<span class="evo-arrow">→</span>' : '') +
+          `<div class="evo-item${isCurrent?' current':''}" data-beast-id="${s.id}">
+            <div class="evo-stage">Stage ${s.stage}</div>
+            <div class="evo-name">${s.name}</div>
+            ${s.variation ? `<div class="evo-var">${s.variation}</div>` : ''}
+          </div>`;
+      }).join('')}
+    </div>
+  `;
+
+  // Evo item click handlers
+  document.querySelectorAll('.evo-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const bid = parseInt(item.dataset.beastId);
+      const b = BEASTS.find(x => x.id === bid);
+      if(b) showBeastInModal(group, b);
+    });
+  });
+
+  // Animate stat bars
+  setTimeout(() => {
+    document.querySelectorAll('.stat-bar').forEach(bar => {
+      const w = bar.style.width;
+      bar.style.width = '0%';
+      requestAnimationFrame(() => { bar.style.width = w; });
+    });
+  }, 50);
+}
+
+// Close modal
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modal').addEventListener('click', e => { if(e.target === e.currentTarget) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// Initial render
+render();
+})();
+</script>
+</body>
+</html>
