@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuroro Beast Illustrations — Full Inventory</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#0a0a0f; color:#e0e0e0; font-family:'Inter',sans-serif; padding:20px; }
+h1 { text-align:center; color:#f0c040; font-size:2em; margin:20px 0; }
+.subtitle { text-align:center; color:#888; margin-bottom:30px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; max-width:1400px; margin:0 auto; }
+.card { background:#16161f; border:1px solid #2a2a3a; border-radius:12px; padding:10px; text-align:center; transition:transform .2s, border-color .2s; cursor:pointer; }
+.card:hover { transform:translateY(-4px); border-color:#f0c040; }
+.card img { width:100%; max-width:120px; height:auto; image-rendering:auto; margin:0 auto; display:block; }
+.card .id { color:#f0c040; font-size:.75em; font-weight:600; margin-top:6px; }
+.card .name { color:#fff; font-size:.85em; font-weight:600; margin-top:2px; }
+.card .elements { color:#888; font-size:.7em; margin-top:2px; }
+.stats { text-align:center; color:#888; margin:20px 0; font-size:.9em; }
+</style>
+</head>
+<body>
+<h1>🔥 Kuroro Beast Illustrations — Full Inventory</h1>
+<p class="subtitle">All 117 entries from the Kuropedia (kuroro.com/kuropedia)</p>
+<p class="stats" id="stats"></p>
+<div class="grid" id="grid"></div>
+<script>
+const beasts = [
+{id:"001",name:"Argos",el:"Light"},{id:"002",name:"Vulcanine",el:"Light/Fire"},{id:"003",name:"Vulcanine",el:"Light/Fire"},
+{id:"004",name:"Mermine",el:"Light/Water"},{id:"005",name:"Mermine",el:"Light/Water"},{id:"006",name:"Arbolos",el:"Light/Plant"},
+{id:"007",name:"Arbolos",el:"Light/Plant"},{id:"008",name:"Sparkane",el:"Light/Electric"},{id:"009",name:"Sparkane",el:"Light/Electric"},
+{id:"010",name:"Koji",el:"Light"},{id:"011",name:"Fuegoji",el:"Light/Fire"},{id:"012",name:"Fuegoji",el:"Light/Fire"},
+{id:"013",name:"Kahuji",el:"Light/Water"},{id:"014",name:"Kahuji",el:"Light/Water"},{id:"015",name:"Jacaranji",el:"Light/Plant"},
+{id:"016",name:"Jacaranji",el:"Light/Plant"},{id:"017",name:"Tormenji",el:"Light/Electric"},{id:"018",name:"Tormenji",el:"Light/Electric"},
+{id:"019",name:"Torudo",el:"Light"},{id:"020",name:"Torchudo",el:"Light/Fire"},{id:"021",name:"Torchudo",el:"Light/Fire"},
+{id:"022",name:"Mizudo",el:"Light/Water"},{id:"023",name:"Mizudo",el:"Light/Water"},{id:"024",name:"Marshudo",el:"Light/Plant"},
+{id:"025",name:"Marshudo",el:"Light/Plant"},{id:"026",name:"Zapudo",el:"Light/Electric"},{id:"027",name:"Zapudo",el:"Light/Electric"},
+{id:"028",name:"Hydrake",el:"Plant/Water"},{id:"029",name:"Hydrake",el:"Plant/Water"},{id:"030",name:"Hydrake",el:"Plant/Water"},
+{id:"031",name:"Mandor",el:"Fire"},{id:"032",name:"Mandor",el:"Fire"},{id:"033",name:"Mandor",el:"Fire/Spirit"},
+{id:"034",name:"Crakos",el:"Water"},{id:"035",name:"Crakos",el:"Water"},{id:"036",name:"Crakos",el:"Water/Metal"},
+{id:"037",name:"Rhyshock",el:"Electric"},{id:"038",name:"Rhyshock",el:"Electric"},{id:"039",name:"Rhyshock",el:"Electric/Earth"},
+{id:"040",name:"Doxus",el:"Dark"},{id:"041",name:"Doxus",el:"Dark"},{id:"042",name:"Doxus",el:"Dark/Fire"},
+{id:"043",name:"Spindal",el:"Light"},{id:"044",name:"Spindal",el:"Light"},{id:"045",name:"Spindal",el:"Light/Spirit"},
+{id:"046",name:"Corvax",el:"Wind"},{id:"047",name:"Corvax",el:"Wind"},{id:"048",name:"Corvax",el:"Wind/Metal"},
+{id:"049",name:"Drazil",el:"Corrosion"},{id:"050",name:"Drazil",el:"Corrosion"},{id:"051",name:"Drazil",el:"Corrosion/Combat"},
+{id:"052",name:"Pangora",el:"Earth"},{id:"053",name:"Pangora",el:"Earth"},{id:"054",name:"Pangora",el:"Earth/Spirit"},
+{id:"055",name:"Darquill",el:"Dark/Wind"},{id:"056",name:"Darquill",el:"Dark/Wind"},{id:"057",name:"Darquill",el:"Dark/Wind"},
+{id:"058",name:"Graildon",el:"Metal"},{id:"059",name:"Graildon",el:"Metal"},{id:"060",name:"Graildon",el:"Metal/Corrosion"},
+{id:"061",name:"Armanite",el:"Fire/Earth"},{id:"062",name:"Armanite",el:"Fire/Earth"},{id:"063",name:"Armanite",el:"Fire/Earth"},
+{id:"064",name:"Entik",el:"Plant"},{id:"065",name:"Entik",el:"Plant"},{id:"066",name:"Entik",el:"Plant/Combat"},
+{id:"067",name:"Stormstinger",el:"Electric"},{id:"068",name:"Stormstinger",el:"Electric"},{id:"069",name:"Stormstinger",el:"Electric/Wind"},
+{id:"070",name:"Tusking",el:"Combat"},{id:"071",name:"Tusking",el:"Combat"},{id:"072",name:"Tusking",el:"Combat/Earth"},
+{id:"073",name:"Soultan",el:"Spirit"},{id:"074",name:"Soultan",el:"Spirit"},{id:"075",name:"Soultan",el:"Spirit/Dark"},
+{id:"076",name:"Dhrog",el:"Corrosion"},{id:"077",name:"Dhrog",el:"Corrosion"},{id:"078",name:"Dhrog",el:"Corrosion/Plant"},
+{id:"079",name:"Mantara",el:"Earth"},{id:"080",name:"Mantara",el:"Earth"},{id:"081",name:"Mantara",el:"Earth/Dark"},
+{id:"082",name:"Inferus",el:"Metal"},{id:"083",name:"Inferus",el:"Metal"},{id:"084",name:"Inferus",el:"Metal/Fire"},
+{id:"085",name:"Golsting",el:"Electric"},{id:"086",name:"Golsting",el:"Electric"},{id:"087",name:"Golsting",el:"Electric/Corrosion"},
+{id:"088",name:"Metalodon",el:"Metal"},{id:"089",name:"Metalodon",el:"Metal"},{id:"090",name:"Metalodon",el:"Metal/Earth"},
+{id:"091",name:"Malweave",el:"Spirit"},{id:"092",name:"Malweave",el:"Spirit"},{id:"093",name:"Malweave",el:"Spirit/Corrosion"},
+{id:"094",name:"Zephyrus",el:"Wind"},{id:"095",name:"Zephyrus",el:"Wind"},{id:"096",name:"Zephyrus",el:"Wind/Combat"},
+{id:"097",name:"Shadovine",el:"Plant"},{id:"098",name:"Shadovine",el:"Plant"},{id:"099",name:"Shadovine",el:"Plant/Dark"},
+{id:"100",name:"Shoku",el:"Combat"},{id:"101",name:"Shoku",el:"Combat"},{id:"102",name:"Shoku",el:"Combat/Electric"},
+{id:"103",name:"Darktide",el:"Water"},{id:"104",name:"Darktide",el:"Water"},{id:"105",name:"Darktide",el:"Water/Dark"},
+{id:"106",name:"Raikuma",el:"Dark"},{id:"107",name:"Raikuma",el:"Dark"},{id:"108",name:"Raikuma",el:"Dark/Electric"},
+{id:"109",name:"Basskelon",el:"Spirit/Water"},{id:"110",name:"Basskelon",el:"Spirit/Water"},{id:"111",name:"Basskelon",el:"Spirit/Water"},
+{id:"112",name:"Chromantis",el:"Combat"},{id:"113",name:"Chromantis",el:"Combat"},{id:"114",name:"Chromantis",el:"Combat/Metal"},
+{id:"115",name:"Vitorian",el:"Wind"},{id:"116",name:"Vitorian",el:"Wind"},{id:"117",name:"Vitorian",el:"Wind/Corrosion"}
+];
+
+const uniqueSpecies = [...new Set(beasts.map(b=>b.name))].length;
+document.getElementById("stats").textContent = `${beasts.length} entries | ${uniqueSpecies} unique species | 12 elements | 3 starters with 4 elemental evolutions each`;
+
+const grid = document.getElementById("grid");
+beasts.forEach(b => {
+  const stage = parseInt(b.id) <= 27 ? 
+    ((parseInt(b.id)-1)%9 === 0 ? "Stage 1" : (parseInt(b.id)-1)%9 < 4 ? "Stage 2" : "Stage 3") :
+    ((parseInt(b.id)-1)%3 === 0 ? "Stage 1" : (parseInt(b.id)-1)%3 === 1 ? "Stage 2" : "Stage 3");
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `<img src="https://www.kuroro.com/images/beasts/${b.id}.png" alt="${b.name}" loading="lazy"><div class="id">#${b.id} · ${stage}</div><div class="name">${b.name}</div><div class="elements">${b.el}</div>`;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
