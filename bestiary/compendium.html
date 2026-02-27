@@ -1,0 +1,134 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Kuroro Beasts — Japanese Illustration Compendium</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:'Segoe UI',sans-serif;min-height:100vh}
+.hero{text-align:center;padding:50px 20px 30px;background:linear-gradient(180deg,#12121f 0%,#0a0a0f 100%)}
+.hero h1{font-size:2.2em;color:#f0c040;letter-spacing:2px;margin-bottom:8px}
+.hero p{color:#88a;font-size:1em;margin-bottom:6px}
+.hero .count{color:#f0c040;font-size:.85em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;max-width:1400px;margin:0 auto;padding:20px}
+.card{background:#12121f;border:1px solid #1a1a2e;border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .25s,border-color .25s,box-shadow .25s}
+.card:hover{transform:translateY(-6px);border-color:#f0c040;box-shadow:0 8px 30px rgba(240,192,64,.15)}
+.card img{width:100%;aspect-ratio:1;object-fit:contain;background:#0e0e1a;padding:12px}
+.card .info{padding:12px 14px 14px;border-top:1px solid #1a1a2e}
+.card .name{font-weight:700;font-size:1em;color:#fff}
+.card .meta{font-size:.78em;color:#88a;margin-top:3px}
+.card .missing{opacity:.3;filter:grayscale(1)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;justify-content:center;align-items:center;padding:20px}
+.overlay.active{display:flex}
+.overlay img{max-width:90vw;max-height:85vh;object-fit:contain;border-radius:12px}
+.overlay .close{position:fixed;top:20px;right:24px;color:#fff;font-size:2em;cursor:pointer;z-index:101}
+.overlay .label{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:#f0c040;font-size:1.2em;font-weight:700;z-index:101}
+footer{text-align:center;padding:40px 20px;color:#556;font-size:.8em}
+footer a{color:#0088cc;text-decoration:none}
+.legend{display:flex;gap:12px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.legend span{font-size:.75em;padding:3px 10px;border-radius:20px;border:1px solid #2a2a3a}
+.legend .have{border-color:#66BB6A;color:#66BB6A}
+.legend .miss{border-color:#555;color:#555}
+</style></head><body>
+<div class="hero">
+<h1>🎨 Japanese Illustration Compendium</h1>
+<p>Original beast illustrations by Japanese artist — Kuroro Beasts IP</p>
+<div class="count" id="count"></div>
+<div class="legend"><span class="have">✓ In Collection</span><span class="miss">✗ Missing</span></div>
+</div>
+<div class="grid" id="grid"></div>
+<div class="overlay" id="overlay" onclick="this.classList.remove('active')">
+<span class="close">&times;</span>
+<img id="overlayImg"><div class="label" id="overlayLabel"></div>
+</div>
+<footer>Curated by <a href="https://x.com/ToruCeoAI" target="_blank">Toru</a> — CEO of Kuroro Beasts | <a href="https://kuroro.com">kuroro.com</a></footer>
+<script>
+const ALL_BEASTS=[
+{id:1,name:"Argos",el:"Light",stage:1},{id:2,name:"Vulcanine",el:"Light/Fire",stage:2},{id:3,name:"Vulcanine",el:"Light/Fire",stage:3},
+{id:4,name:"Mermine",el:"Light/Water",stage:2},{id:5,name:"Mermine",el:"Light/Water",stage:3},
+{id:6,name:"Arbolos",el:"Light/Plant",stage:2},{id:7,name:"Arbolos",el:"Light/Plant",stage:3},
+{id:8,name:"Sparkane",el:"Light/Electric",stage:2},{id:9,name:"Sparkane",el:"Light/Electric",stage:3},
+{id:10,name:"Koji",el:"Light",stage:1},{id:11,name:"Fuegoji",el:"Light/Fire",stage:2},{id:12,name:"Fuegoji",el:"Light/Fire",stage:3},
+{id:13,name:"Kahuji",el:"Light/Water",stage:2},{id:14,name:"Kahuji",el:"Light/Water",stage:3},
+{id:15,name:"Jacaranji",el:"Light/Plant",stage:2},{id:16,name:"Jacaranji",el:"Light/Plant",stage:3},
+{id:17,name:"Tormenji",el:"Light/Electric",stage:2},{id:18,name:"Tormenji",el:"Light/Electric",stage:3},
+{id:19,name:"Torudo",el:"Light",stage:1},{id:20,name:"Torchudo",el:"Light/Fire",stage:2},{id:21,name:"Torchudo",el:"Light/Fire",stage:3},
+{id:22,name:"Mizudo",el:"Light/Water",stage:2},{id:23,name:"Mizudo",el:"Light/Water",stage:3},
+{id:24,name:"Marshudo",el:"Light/Plant",stage:2},{id:25,name:"Marshudo",el:"Light/Plant",stage:3},
+{id:26,name:"Zapudo",el:"Light/Electric",stage:2},{id:27,name:"Zapudo",el:"Light/Electric",stage:3},
+{id:28,name:"Hydrake",el:"Plant/Water",stage:1},{id:29,name:"Hydrake",el:"Plant/Water",stage:2},{id:30,name:"Hydrake",el:"Plant/Water",stage:3},
+{id:31,name:"Mandor",el:"Fire",stage:1},{id:32,name:"Mandor",el:"Fire",stage:2},{id:33,name:"Mandor",el:"Fire/Spirit",stage:3},
+{id:34,name:"Crakos",el:"Water",stage:1},{id:35,name:"Crakos",el:"Water",stage:2},{id:36,name:"Crakos",el:"Water/Metal",stage:3},
+{id:37,name:"Rhyshock",el:"Electric",stage:1},{id:38,name:"Rhyshock",el:"Electric",stage:2},{id:39,name:"Rhyshock",el:"Electric/Earth",stage:3},
+{id:40,name:"Doxus",el:"Dark",stage:1},{id:41,name:"Doxus",el:"Dark",stage:2},{id:42,name:"Doxus",el:"Dark/Fire",stage:3},
+{id:43,name:"Spindal",el:"Light",stage:1},{id:44,name:"Spindal",el:"Light",stage:2},{id:45,name:"Spindal",el:"Light/Spirit",stage:3},
+{id:46,name:"Corvax",el:"Wind",stage:1},{id:47,name:"Corvax",el:"Wind",stage:2},{id:48,name:"Corvax",el:"Wind/Metal",stage:3},
+{id:49,name:"Drazil",el:"Corrosion",stage:1},{id:50,name:"Drazil",el:"Corrosion",stage:2},{id:51,name:"Drazil",el:"Corrosion/Combat",stage:3},
+{id:52,name:"Pangora",el:"Earth",stage:1},{id:53,name:"Pangora",el:"Earth",stage:2},{id:54,name:"Pangora",el:"Earth/Spirit",stage:3},
+{id:55,name:"Darquill",el:"Dark/Wind",stage:1},{id:56,name:"Darquill",el:"Dark/Wind",stage:2},{id:57,name:"Darquill",el:"Dark/Wind",stage:3},
+{id:58,name:"Graildon",el:"Metal",stage:1},{id:59,name:"Graildon",el:"Metal",stage:2},{id:60,name:"Graildon",el:"Metal/Corrosion",stage:3},
+{id:61,name:"Armanite",el:"Fire/Earth",stage:1},{id:62,name:"Armanite",el:"Fire/Earth",stage:2},{id:63,name:"Armanite",el:"Fire/Earth",stage:3},
+{id:64,name:"Entik",el:"Plant",stage:1},{id:65,name:"Entik",el:"Plant",stage:2},{id:66,name:"Entik",el:"Plant/Combat",stage:3},
+{id:67,name:"Stormstinger",el:"Electric",stage:1},{id:68,name:"Stormstinger",el:"Electric",stage:2},{id:69,name:"Stormstinger",el:"Electric/Wind",stage:3},
+{id:70,name:"Tusking",el:"Combat",stage:1},{id:71,name:"Tusking",el:"Combat",stage:2},{id:72,name:"Tusking",el:"Combat/Earth",stage:3},
+{id:73,name:"Soultan",el:"Spirit",stage:1},{id:74,name:"Soultan",el:"Spirit",stage:2},{id:75,name:"Soultan",el:"Spirit/Dark",stage:3},
+{id:76,name:"Dhrog",el:"Corrosion",stage:1},{id:77,name:"Dhrog",el:"Corrosion",stage:2},{id:78,name:"Dhrog",el:"Corrosion/Plant",stage:3},
+{id:79,name:"Mantara",el:"Earth",stage:1},{id:80,name:"Mantara",el:"Earth",stage:2},{id:81,name:"Mantara",el:"Earth/Dark",stage:3},
+{id:82,name:"Inferus",el:"Metal",stage:1},{id:83,name:"Inferus",el:"Metal",stage:2},{id:84,name:"Inferus",el:"Metal/Fire",stage:3},
+{id:85,name:"Golsting",el:"Electric",stage:1},{id:86,name:"Golsting",el:"Electric",stage:2},{id:87,name:"Golsting",el:"Electric/Corrosion",stage:3},
+{id:88,name:"Metalodon",el:"Metal",stage:1},{id:89,name:"Metalodon",el:"Metal",stage:2},{id:90,name:"Metalodon",el:"Metal/Earth",stage:3},
+{id:91,name:"Malweave",el:"Spirit",stage:1},{id:92,name:"Malweave",el:"Spirit",stage:2},{id:93,name:"Malweave",el:"Spirit/Corrosion",stage:3},
+{id:94,name:"Zephyrus",el:"Wind",stage:1},{id:95,name:"Zephyrus",el:"Wind",stage:2},{id:96,name:"Zephyrus",el:"Wind/Combat",stage:3},
+{id:97,name:"Shadovine",el:"Plant",stage:1},{id:98,name:"Shadovine",el:"Plant",stage:2},{id:99,name:"Shadovine",el:"Plant/Dark",stage:3},
+{id:100,name:"Shoku",el:"Combat",stage:1},{id:101,name:"Shoku",el:"Combat",stage:2},{id:102,name:"Shoku",el:"Combat/Electric",stage:3},
+{id:103,name:"Darktide",el:"Water",stage:1},{id:104,name:"Darktide",el:"Water",stage:2},{id:105,name:"Darktide",el:"Water/Dark",stage:3},
+{id:106,name:"Raikuma",el:"Dark",stage:1},{id:107,name:"Raikuma",el:"Dark",stage:2},{id:108,name:"Raikuma",el:"Dark/Electric",stage:3},
+{id:109,name:"Basskelon",el:"Spirit/Water",stage:1},{id:110,name:"Basskelon",el:"Spirit/Water",stage:2},{id:111,name:"Basskelon",el:"Spirit/Water",stage:3},
+{id:112,name:"Chromantis",el:"Combat",stage:1},{id:113,name:"Chromantis",el:"Combat",stage:2},{id:114,name:"Chromantis",el:"Combat/Metal",stage:3},
+{id:115,name:"Vitorian",el:"Wind",stage:1},{id:116,name:"Vitorian",el:"Wind",stage:2},{id:117,name:"Vitorian",el:"Wind/Corrosion",stage:3}
+];
+
+const HAVE={
+"Arbolos":1,"Armanite":1,"Basskelon":1,"Chromantis":1,"Corvax":1,"Crakos":1,
+"Darktide":1,"Darktide_evo":1,"Darquill":1,"Darquill_evo":1,"Dhrog":1,"Drazil":1,
+"Entik":1,"Fuegoji":1,"Golsting":1,"Golsting_s1":1,"Hydrake":1,"Inferus":1,
+"Jacaranji":1,"Kahuji":1,"Mantara":1,"Metalodon":1,"Pangora":1,"Raikuma":1,
+"Rhyshock":1,"Rhyshock_s3":1,"Shadovine":1,"Shoku":1,"Soultan":1,"Spindal":1,
+"Stormstinger":1,"Tusking":1,"Vitorian":1,"Vulcanine":1,"Zephyrus":1
+};
+
+// Map beast name to illustration file — Stage 3 beasts from Sage's dump
+const FILE_MAP={
+"Arbolos":"Arbolos","Armanite":"Armanite","Basskelon":"Basskelon","Chromantis":"Chromantis",
+"Corvax":"Corvax","Crakos":"Crakos","Darktide":"Darktide","Darquill":"Darquill",
+"Dhrog":"Dhrog","Drazil":"Drazil","Entik":"Entik","Fuegoji":"Fuegoji","Golsting":"Golsting",
+"Hydrake":"Hydrake","Inferus":"Inferus","Jacaranji":"Jacaranji","Kahuji":"Kahuji",
+"Mantara":"Mantara","Metalodon":"Metalodon","Pangora":"Pangora","Raikuma":"Raikuma",
+"Rhyshock":"Rhyshock","Shadovine":"Shadovine","Shoku":"Shoku","Soultan":"Soultan",
+"Spindal":"Spindal","Stormstinger":"Stormstinger","Tusking":"Tusking","Vitorian":"Vitorian",
+"Vulcanine":"Vulcanine","Zephyrus":"Zephyrus"
+};
+
+// Show unique species only (stage 1 or the one we have illustration for)
+const seen=new Set();
+const unique=ALL_BEASTS.filter(b=>{
+  if(seen.has(b.name))return false;
+  seen.add(b.name);return true;
+});
+
+const haveCount=Object.keys(FILE_MAP).length;
+const totalSpecies=unique.length;
+document.getElementById('count').textContent=`${haveCount} of ${totalSpecies} species illustrated (${Math.round(haveCount/totalSpecies*100)}%)`;
+
+const grid=document.getElementById('grid');
+unique.forEach(b=>{
+  const hasIllust=FILE_MAP[b.name];
+  const card=document.createElement('div');
+  card.className='card';
+  const imgSrc=hasIllust?`jp-illustrations/${FILE_MAP[b.name]}.png`:`https://www.kuroro.com/images/beasts/${String(b.id).padStart(3,'0')}.png`;
+  card.innerHTML=`<img src="${imgSrc}" alt="${b.name}" class="${hasIllust?'':'missing'}" loading="lazy"><div class="info"><div class="name">${hasIllust?'✓ ':'✗ '}${b.name}</div><div class="meta">#${String(b.id).padStart(3,'0')} · ${b.el}</div></div>`;
+  if(hasIllust){card.onclick=()=>{
+    document.getElementById('overlayImg').src=imgSrc;
+    document.getElementById('overlayLabel').textContent=b.name+' — '+b.el;
+    document.getElementById('overlay').classList.add('active');
+  }}
+  grid.appendChild(card);
+});
+</script></body></html>
